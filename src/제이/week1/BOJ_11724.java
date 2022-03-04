@@ -1,4 +1,4 @@
-package 제이;
+package 제이.week1;
 
 public class BOJ_11724 {
     private void solve() {
