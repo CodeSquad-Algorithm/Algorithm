@@ -8,7 +8,8 @@ public class BOJ_2512_예산 {
     static int[] budgets;
 
     public static void main(String[] args) {
-        try { 
+
+        try {
             input();
             solve();
         } catch (IOException e) {
