@@ -19,8 +19,6 @@ for _ in range(M):
     cmd = list(map(int, input().split()))
     if len(cmd) == 3:
         mode, idx, pos = cmd
-        # idx -= 1
-        # pos -= 1
         if mode == 1:
             if trains[idx].get(pos) is None:
                 trains[idx][pos] = True
@@ -29,7 +27,6 @@ for _ in range(M):
                 trains[idx].pop(pos)
     else:
         mode, idx = cmd
-        # idx -= 1
         train = trains[idx]
         if not train:
             continue
@@ -57,12 +54,10 @@ for _ in range(M):
                         temp = False
 
 
-print(trains)
 result = set()
 
 for train in trains.values():
     
-    # print(tuple(train))
     result.add(tuple(sorted(train)))
 
 print(len(result))

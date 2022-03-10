@@ -9,12 +9,11 @@ def get_answer():
         return max_req
 
     avg = total // N
-    print("avg:",avg)
     if min_req >= avg:
         return avg
 
     limit = avg
-    while True:
+    for _ in range(2):
         remain = total
         cnt = 0
         for r in req:
