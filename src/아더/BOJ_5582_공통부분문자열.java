@@ -17,8 +17,8 @@ public class BOJ_5582_공통부분문자열 {
     }
 
     private static void solve() {
-        for (int i = 0; i < S1.length(); i++) {
-            for (int j = 0; j < S2.length(); j++) {
+        for (int i = 0; i <= S1.length(); i++) {
+            for (int j = 0; j <= S2.length(); j++) {
                 if (i == 0 || j == 0) {
                     LCS[i][j] = 0;
                 } else if (S1.charAt(i - 1) == S2.charAt(j - 1)) {
