@@ -1,81 +1,49 @@
+from collections import deque
 
-import sys
+C, R = list(map(int, input().split()))
 
-m, n, h = map(int, sys.stdin.readline().split())
+dir = [(0, 1), (0, -1), (-1, 0), (1, 0)]
 
-tomato = [ [ [] for _ in range(n)] for _ in range(h)]
+board = []
 
-# print(tomato[0])
+for _ in range(R):
+    board.append(list(map(int, input().split())))
 
-for i in range(h):
-    for j in range(n):
-        
-            
-        t = list(map(int, sys.stdin.readline().split()))
-        tomato[i][j] = t
+visited = [[False] * C for _ in range(R)]
+q = deque()
 
-pos = [[1, 0, 0], [-1, 0, 0], [0, 0, -1], [0, 0, 1], [0, -1, 0], [0, 1, 0]]
-
-def bfs(tomato):
-    
-    cnt = 0 
-    # if cnt == 0 and 0 not in tomato:
-    #     return 0
-
-    while True:
-        stack = []
-        possible = True
-
-        # if 0 not in tomato:
-        #     return 0
-
-        for i in range(h):
-            for j in range(n):
-                for k in range(m):
-                    if tomato[i][j][k] == 1:
-                        for dh, dn, dm in pos:
-                            next_h, next_n, next_m = i+dh, j+dn, k+dm
-                            if h > next_h >= 0 and n > next_n >= 0 and m > next_m >= 0:
-                                if tomato[next_h][next_n][next_m] == 0:
-                                    if [next_h, next_n, next_m] not in stack:
-                                        stack.append([next_h, next_n, next_m])
-                                    # print(cnt, stack)
-                    elif tomato[i][j][k] == 0:
-                        possible = False
-        if not stack:
-            if possible:
-                return cnt
-            else:
-                return -1
-            
-            
-        
-        while stack:
-            i, j, k = stack.pop()
-            tomato[i][j][k] = 1
-        
-        cnt += 1
+day = 0
+cur_day = 0
+for r in range(R):
+    for c in range(C):
+        if board[r][c] == 1:
+            q.append((r, c, 0))
+            visited[r][c] == True
 
 
-        
-        # print(tomato)
-        # break
+while q:
+    r, c, day = q.popleft()
+
+    for dr, dc in dir:
+        nr, nc = r+dr, c+dc
+        if 0 > nr or nr >= R or 0 > nc or nc >= C or visited[nr][nc] or board[nr][nc] == -1:
+            continue
+        if board[nr][nc] == 0:
+            visited[nr][nc] = True
+            cur_day = day+1
+            q.append((nr, nc, cur_day))
+            board[nr][nc] += 1
+
+
+    day = cur_day
+
+def solve():
+    for r in range(R):
+        for c in range(C):
+            if board[r][c] == 0:
+                print(-1)
+                return
+    print(day)
     
 
-# print(tomato[1])
-
-# for i in range(h):
-#     for j in range(n):
-#         for k in range(m):
-            
-#             sw = 0
-
-#             if tomato[i][j][k] == 1:
-#                 for dh, dn, dm in pos:
-#                     nh, nn, nm = i+dh, j+dn, k+dm
-#                     if nh >= 0 and nn >= 0 and nm >= 0:
-#                         if tomato[nh][nn][nm] == 0:
-#                             tomato[nh][nn][nm] += 1
-#                             sw = 1
-
-print(bfs(tomato))
+solve()
