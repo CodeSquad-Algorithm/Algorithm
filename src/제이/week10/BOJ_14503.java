@@ -20,39 +20,6 @@ public class BOJ_14503 {
         System.out.println(robotVacuum.getCleaned());
     }
 
-    private static void solve() {
-        robotVacuum.cleanArea(area);
-        robotVacuum.turnLeft();
-
-        int turnLeftCount = 1;
-
-        while (true) {
-            Point nextPoint = Point.add(robotVacuum.getPoint(), robotVacuum.getDirection().getDirectionPoint());
-
-            if (getAreaValue(area, nextPoint) == AreaStatus.EMPTY.getValue()) {
-
-                robotVacuum.moveForward();
-                robotVacuum.cleanArea(area);
-
-                turnLeftCount = 0;
-            }
-
-            if (turnLeftCount == MAX_TURN_COUNT) {
-                if (getAreaValue(area, nextPoint) == AreaStatus.WALL.getValue()) break;
-
-                robotVacuum.moveBackward();
-                turnLeftCount = 0;
-            }
-
-            robotVacuum.turnLeft();
-            turnLeftCount++;
-        }
-    }
-
-    private static int getAreaValue(int[][] area, Point point) {
-        return area[point.y][point.x];
-    }
-
     private static void readInput() throws IOException {
         BufferedReader br = new BufferedReader(new InputStreamReader(System.in));
         StringTokenizer st = new StringTokenizer(br.readLine());
@@ -77,6 +44,44 @@ public class BOJ_14503 {
                 area[y][x] = value;
             }
         }
+    }
+
+    private static void solve() {
+        robotVacuum.cleanArea(area);
+        robotVacuum.turnLeft();
+
+        int turnLeftCount = 1;
+
+        while (true) {
+            Point nextPoint = Point.add(robotVacuum.getPoint(), robotVacuum.getDirection().getDirectionPoint());
+
+            if (isEmptyArea(area, nextPoint)) {
+                robotVacuum.moveForward();
+                robotVacuum.cleanArea(area);
+
+                turnLeftCount = 0;
+            }
+
+            if (turnLeftCount == MAX_TURN_COUNT) {
+                Direction back = robotVacuum.getDirection().getBack();
+                Point backPoint = Point.add(robotVacuum.getPoint(), back.getDirectionPoint());
+                if (isWallArea(area, backPoint)) break;
+
+                robotVacuum.moveBackward();
+                turnLeftCount = 0;
+            }
+
+            robotVacuum.turnLeft();
+            turnLeftCount++;
+        }
+    }
+
+    private static boolean isEmptyArea(int[][] area, Point point) {
+        return area[point.getY()][point.getX()] == AreaStatus.EMPTY.getValue();
+    }
+
+    private static boolean isWallArea(int[][] area, Point point) {
+        return area[point.getY()][point.getX()] == AreaStatus.WALL.getValue();
     }
 }
 
@@ -103,7 +108,7 @@ class RobotVacuum {
     }
 
     public void cleanArea(int[][] area) {
-        area[this.point.y][this.point.x] = AreaStatus.CLEANED.getValue();
+        area[this.point.getY()][this.point.getX()] = AreaStatus.CLEANED.getValue();
         cleaned++;
     }
 
@@ -141,24 +146,29 @@ enum AreaStatus {
 }
 
 enum Direction {
-    UP(0, new Point(0, -1)),
-    RIGHT(1, new Point(1, 0)),
-    DOWN(2, new Point(0, 1)),
-    LEFT(3, new Point(-1, 0));
+    UP(new Point(0, -1)),
+    RIGHT(new Point(1, 0)),
+    DOWN(new Point(0, 1)),
+    LEFT(new Point(-1, 0));
 
     static {
         UP.next = LEFT;
         RIGHT.next = UP;
         DOWN.next = RIGHT;
         LEFT.next = DOWN;
+
+        UP.back = DOWN;
+        RIGHT.back = LEFT;
+        DOWN.back = UP;
+        LEFT.back = RIGHT;
     }
 
     private Direction next;
-    private final int value;
+    private Direction back;
+
     private final Point directionPoint;
 
-    Direction(int value, Point directionPoint) {
-        this.value = value;
+    Direction(Point directionPoint) {
         this.directionPoint = directionPoint;
     }
 
@@ -166,8 +176,8 @@ enum Direction {
         return next;
     }
 
-    public int getValue() {
-        return value;
+    public Direction getBack() {
+        return back;
     }
 
     public Point getDirectionPoint() {
@@ -186,8 +196,8 @@ enum Direction {
 }
 
 class Point {
-    int x;
-    int y;
+    private int x;
+    private int y;
 
     public Point(int x, int y) {
         this.x = x;
@@ -206,3 +216,11 @@ class Point {
         return new Point(p1.x + p2.x, p1.y + p2.y);
     }
 }
+
+/*
+    삽질한 부분
+
+    - 후진의 의미
+        - 소코반에서 처럼 이전 칸으로 되돌아간다는 의미
+        - 현재 방향을 기준으로 뒤로 간다는 의미
+ */
