@@ -9,7 +9,7 @@ def solution(nums: List[List[int]]) -> int:
             if r == len(nums) - 1:
                 dp[r][c] = nums[r][c]
             else:
-                dp[r][c] = nums[r][c] + max(dp[r + 1][c], dp[r][c + 1])
+                dp[r][c] = nums[r][c] + max(dp[r + 1][c], dp[r + 1][c + 1])
 
     return dp[0][0]
 
