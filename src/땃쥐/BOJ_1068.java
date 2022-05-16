@@ -7,28 +7,18 @@ import java.util.Objects;
 
 public class BOJ_1068 {
 
-    private static int N; // 노드의 갯수
+    private static int N;
     private static Node[] nodes;
 
     public static void main(String[] args) throws IOException {
-        N = readInt();
+        initNodes();
+        setParents();
+        detachNode();
+        int numberOfLeafNodes = numberOfLeafNodes();
+        System.out.print(numberOfLeafNodes);
+    }
 
-        nodes = new Node[N];
-
-        for (int i = 0; i < N; i++) {
-            nodes[i] = new Node(i);
-        }
-
-        for (int i = 0; i < N; i++) {
-            int parentNodeNumber = readInt();
-            if (isNotRootNode(parentNodeNumber)) {
-                nodes[parentNodeNumber].addChild(nodes[i]);
-            }
-        }
-
-        int deleteNodeNumber = readInt();
-        nodes[deleteNodeNumber].detach();
-
+    private static int numberOfLeafNodes() {
         int count = 0;
 
         for (Node node : nodes) {
@@ -36,12 +26,29 @@ public class BOJ_1068 {
                 count++;
             }
         }
-
-        System.out.print(count);
+        return count;
     }
 
-    private static boolean isNotRootNode(int parentNodeNumber) {
-        return parentNodeNumber != -1;
+    private static void detachNode() throws IOException {
+        int deleteNodeNumber = readInt();
+        nodes[deleteNodeNumber].detach();
+    }
+
+    private static void setParents() throws IOException {
+        for (int i = 0; i < N; i++) {
+            int parentNodeNumber = readInt();
+            if (parentNodeNumber >= 0) {
+                nodes[i].changeParent(nodes[parentNodeNumber]);
+            }
+        }
+    }
+
+    private static void initNodes() throws IOException {
+        N = readInt();
+        nodes = new Node[N];
+        for (int i = 0; i < N; i++) {
+            nodes[i] = new Node(i);
+        }
     }
 
     private static int readInt() throws IOException {
@@ -77,9 +84,9 @@ class Node {
         return value;
     }
 
-    public void addChild(Node child) { // 양방향 참조
-        childs.add(child);
-        child.parent = this;
+    public void changeParent(Node parent) { // 양방향 참조
+        this.parent = parent;
+        parent.childs.add(this);
     }
 
     public Node getRootNode() {
